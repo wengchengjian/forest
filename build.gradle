@@ -1,0 +1,118 @@
+buildscript {
+    ext {
+        springBootVersion = '3.0.0'
+        springCloudVersion = '2022.0.0'
+    }
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath('com.bmuschko:gradle-docker-plugin:6.4.0')
+    }
+}
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '3.0.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+//    id 'org.graalvm.buildtools.native' version '0.9.18'
+    id 'idea'
+    id 'checkstyle'
+
+}
+
+mainClassName = 'com.wcj.blog.starter.GossipBlogServiceApplication'
+
+allprojects {
+
+    ext {
+        ports = [8080]
+    }
+
+    group = 'com.wcj.blog'
+    // jdk版本
+    sourceCompatibility = 17
+    targetCompatibility = 17
+
+    // 指定编码格式
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'idea'
+    apply plugin: 'checkstyle'
+
+
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
+        mavenCentral()
+    }
+
+    dependencyManagement {
+        imports {
+            // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+        dependencies {
+            dependency 'org.redisson:redisson-spring-boot-starter:3.19.2'
+            dependency 'log4j:log4j:1.2.17'
+            dependency 'commons-io:commons-io:2.11.0'
+            dependency 'cn.hutool:hutool-all:5.8.11'
+            // https://mvnrepository.com/artifact/com.alibaba/fastjson
+            dependency 'com.alibaba:fastjson:2.0.24'
+
+            dependency 'com.google.guava:guava:31.1-jre'
+            // https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-boot-starter
+            dependency 'com.baomidou:mybatis-plus-boot-starter:3.5.3.1'
+            // https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-generator
+            dependency 'p6spy:p6spy:3.9.1'
+            dependency 'com.github.ben-manes.caffeine:caffeine:3.1.2'
+            dependency 'junit:junit:4.13.2'
+            dependency 'mysql:mysql-connector-java:8.0.32'
+            dependency 'org.projectlombok:lombok:1.18.24'
+            dependency 'com.github.penggle:kaptcha:2.3.2'
+        }
+    }
+}
+bootJar.enabled = true
+/**
+ * 公共依赖
+ */
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'log4j:log4j'
+    implementation 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.google.guava:guava'
+    implementation 'commons-io:commons-io'
+    implementation 'com.alibaba:fastjson'
+    implementation 'org.apache.commons:commons-lang3:3.6'
+    implementation 'io.netty:netty-all:4.1.86.Final'
+    implementation 'cn.hutool:hutool-all'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
+}
+tasks.withType(Jar) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
